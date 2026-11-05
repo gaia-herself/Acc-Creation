@@ -1,6 +1,6 @@
 // new-account.js
 // CHANGED: LADY_NAME constant removed. The lady name comes only from the secret.
-const START_AT = Number(process.env.START_AT || 45);       // test from a step
+const START_AT = Number(process.env.START_AT || 45);       // 1 to 39, then 45 to 94
 const STOP_AT = Number(process.env.STOP_AT || 94);        // test up to a step   // CHANGED: back to 39
 
 const V3 = 'https://v3.g.ladypopular.com';
