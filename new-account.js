@@ -7,8 +7,10 @@ const V3 = 'https://v3.g.ladypopular.com';
 const BLOCKS = { eventId: 484, zoneId: 1852 };
 const BOARD = { eventId: 395, zoneId: 320 };
 const BOARD_ITEMS_NEEDED = 3;      // Step 49: items that finish the board
-const CLUB_ID = 5791;              // Step 90
 const POSE_COLLECTION_ID = 363;    // Step 95
+const BOOSTER_IDS = [191, 192, 193, 194];   // Step 73: popularity boosters
+const BOOSTER_BUY_COUNT = 50;               // Step 73: purchases per booster
+const BOOSTER_BUY_DELAY = 0.5;              // Step 73: seconds between purchases
 
 // ---------------------------------------------------------------- bodies
 const SALON_SAVE_3 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=7&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=19&appearance%5B1%5D%5Bcolor%5D=16&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=12&appearance%5B2%5D%5Bcolor%5D=&appearance%5B3%5D%5Btype%5D=5&appearance%5B3%5D%5Bnum%5D=191&appearance%5B3%5D%5Bcolor%5D=14&appearance%5B4%5D%5Btype%5D=8&appearance%5B4%5D%5Bnum%5D=1&appearance%5B4%5D%5Bcolor%5D=1&appearance%5B4%5D%5Bsize%5D=0&appearance%5B5%5D%5Btype%5D=9&appearance%5B5%5D%5Bnum%5D=14&appearance%5B5%5D%5Bcolor%5D=2&appearance%5B6%5D%5Btype%5D=11&appearance%5B6%5D%5Bnum%5D=2&appearance%5B6%5D%5Bcolor%5D=12&appearance%5B7%5D%5Btype%5D=4&appearance%5B7%5D%5Bnum%5D=4&appearance%5B7%5D%5Bcolor%5D=1&appearance%5B8%5D%5Btype%5D=10&appearance%5B8%5D%5Bnum%5D=9&appearance%5B8%5D%5Bcolor%5D=34&appearance%5B9%5D%5Btype%5D=12&appearance%5B9%5D%5Bnum%5D=1&appearance%5B9%5D%5Bcolor%5D=12';
@@ -23,8 +25,8 @@ const FILTER_54 = 'isArchive=false&wardrobePage=wardrobe&ajaxPostUrl=%2Fajax%2Fw
 // Step 97 makeup save (was Step 93)
 const SALON_SAVE_93 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=31&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=10&appearance%5B2%5D%5Bcolor%5D=1&appearance%5B3%5D%5Btype%5D=5&appearance%5B3%5D%5Bnum%5D=191&appearance%5B3%5D%5Bcolor%5D=14&appearance%5B4%5D%5Btype%5D=8&appearance%5B4%5D%5Bnum%5D=1&appearance%5B4%5D%5Bcolor%5D=5&appearance%5B5%5D%5Btype%5D=9&appearance%5B5%5D%5Bnum%5D=30&appearance%5B5%5D%5Bcolor%5D=15&appearance%5B6%5D%5Btype%5D=10&appearance%5B6%5D%5Bnum%5D=9&appearance%5B6%5D%5Bcolor%5D=33&appearance%5B7%5D%5Btype%5D=11&appearance%5B7%5D%5Bnum%5D=2&appearance%5B7%5D%5Bcolor%5D=9&appearance%5B8%5D%5Btype%5D=12&appearance%5B8%5D%5Bnum%5D=1&appearance%5B8%5D%5Bcolor%5D=12&appearance%5B9%5D%5Btype%5D=4&appearance%5B9%5D%5Bnum%5D=3&appearance%5B9%5D%5Bcolor%5D=1';
 
-// New Step 93 makeup save
-const SALON_SAVE_NEW_93 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=19&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=1&appearance%5B2%5D%5Bcolor%5D=&appearance%5B3%5D%5Btype%5D=5&appearance%5B3%5D%5Bnum%5D=1066&appearance%5B3%5D%5Bcolor%5D=4&appearance%5B4%5D%5Btype%5D=8&appearance%5B4%5D%5Bnum%5D=1&appearance%5B4%5D%5Bcolor%5D=5&appearance%5B5%5D%5Btype%5D=9&appearance%5B5%5D%5Bnum%5D=14&appearance%5B5%5D%5Bcolor%5D=15&appearance%5B6%5D%5Btype%5D=10&appearance%5B6%5D%5Bnum%5D=9&appearance%5B6%5D%5Bcolor%5D=33&appearance%5B7%5D%5Btype%5D=11&appearance%5B7%5D%5Bnum%5D=2&appearance%5B7%5D%5Bcolor%5D=9&appearance%5B8%5D%5Btype%5D=12&appearance%5B8%5D%5Bnum%5D=1&appearance%5B8%5D%5Bcolor%5D=12&appearance%5B9%5D%5Btype%5D=4&appearance%5B9%5D%5Bnum%5D=3&appearance%5B9%5D%5Bcolor%5D=1';
+// CHANGED: Step 93 makeup save - the new look (recorded from the game)
+const SALON_SAVE_NEW_93 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=19&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=1&appearance%5B2%5D%5Bcolor%5D=1&appearance%5B3%5D%5Btype%5D=8&appearance%5B3%5D%5Bnum%5D=1&appearance%5B3%5D%5Bcolor%5D=5&appearance%5B4%5D%5Btype%5D=9&appearance%5B4%5D%5Bnum%5D=14&appearance%5B4%5D%5Bcolor%5D=15&appearance%5B5%5D%5Btype%5D=10&appearance%5B5%5D%5Bnum%5D=9&appearance%5B5%5D%5Bcolor%5D=33&appearance%5B6%5D%5Btype%5D=11&appearance%5B6%5D%5Bnum%5D=2&appearance%5B6%5D%5Bcolor%5D=9&appearance%5B7%5D%5Btype%5D=12&appearance%5B7%5D%5Bnum%5D=1&appearance%5B7%5D%5Bcolor%5D=12&appearance%5B8%5D%5Btype%5D=4&appearance%5B8%5D%5Bnum%5D=3&appearance%5B8%5D%5Bcolor%5D=1&appearance%5B9%5D%5Btype%5D=5&appearance%5B9%5D%5Bnum%5D=191&appearance%5B9%5D%5Bcolor%5D=4';
 
 // Step 76 amounts
 const AMOUNTS = [
@@ -377,7 +379,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
   const steps = [
 
     // Steps 1 & 2: nothing to do, just wait
-    [1, 'Wait before start', async () => { await sleep(page, 10); }],
+    [1, 'Wait before start', async () => { await sleep(page, 5); }],   // CHANGED: 5 seconds
 
     [3, 'Makeup', async () => {
       await goto(page, `${V3}/beauty_salon.php`);       // makes sure we are on the game domain
@@ -739,9 +741,31 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       await sleep(page, 5);
     }],
 
-    [73, 'Buy 1000 FP', async () => {
-      const j = await postForm(page, '/ajax/train.php', 'type=buyFashionPoints&fpToBuy=1000');
-      need(j, 'Step 73 buyFashionPoints');
+    // CHANGED: Step 73 (was "Buy 1000 FP"). Buy each popularity booster 50 times, then use each one once.
+    // This replaces the old Step 83 (buy + use one at a time), which was removed.
+    [73, 'Buy 4 popularity boosters x50, then use each once', async () => {
+      await goto(page, `${V3}/duels.php`);
+      await sleep(page, 5);
+
+      // buy phase: all 50 purchases of one booster, then the next booster
+      for (const id of BOOSTER_IDS) {
+        let ok = 0;
+        for (let i = 1; i <= BOOSTER_BUY_COUNT; i++) {
+          const j = await postForm(page, '/ajax/vip_shop.php', `type=buyPopularityBooster&item_id=${id}`);
+          if (j && !j.__nonjson && j.status === 1) ok++;
+          else console.log(`⚠️ Step 73 buy booster ${id} #${i}: unexpected response ${raw(j)}`);
+          await sleep(page, BOOSTER_BUY_DELAY);
+        }
+        console.log(`🛒 Booster ${id}: ${ok}/${BOOSTER_BUY_COUNT} bought`);
+      }
+
+      // use phase: each booster exactly once
+      for (const id of BOOSTER_IDS) {
+        await fire(page, `Step 73 use booster ${id}`, '/ajax/items.php', `type=useItem&item_id=${id}&price=false`);
+        await sleep(page, 2);
+      }
+
+      await reload(page);
       await sleep(page, 5);
     }],
 
@@ -751,19 +775,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
     [76, 'Redistribute FP', async () => { await redistributeFP(page); }],
 
     // Steps 77-80 and 82 were removed. (Step 81 was moved to Step 96.)
-
-    [83, 'Buy and use 4 popularity boosters', async () => {
-      await goto(page, `${V3}/duels.php`);
-      await sleep(page, 5);
-      for (const id of [191, 192, 193, 194]) {
-        await fire(page, `Step 83 buy booster ${id}`, '/ajax/vip_shop.php', `type=buyPopularityBooster&item_id=${id}`);
-        await sleep(page, 2);
-        await fire(page, `Step 83 use booster ${id}`, '/ajax/items.php', `type=useItem&item_id=${id}&price=false`);
-        await sleep(page, 2);
-      }
-      await reload(page);
-      await sleep(page, 5);
-    }],
+    // CHANGED: Step 83 was removed (its job is now done by Step 73).
 
     [84, 'FA: use all energy', async () => {
       await fire(page, 'Step 84 massChallenge', '/ajax/arena.php', 'action=massChallenge');
@@ -812,13 +824,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       await sleep(page, 5);
     }],
 
-    [90, 'Club: send application', async () => {
-      await goto(page, `${V3}/guilds.php?id=${CLUB_ID}`);
-      await sleep(page, 5);
-      await fire(page, 'Step 90 sendApplication', '/ajax/guilds.php', `type=sendApplication&guild=${CLUB_ID}&message=hi`);
-      await reload(page);
-      await sleep(page, 5);
-    }],
+    // CHANGED: Step 90 (club application) is skipped / removed.
 
     [91, 'Salon: buy items for diamonds', async () => {
       await goto(page, `${V3}/beauty_salon.php`);
@@ -850,7 +856,8 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       }
     }],
 
-    [93, 'Save makeup (new)', async () => {
+    // CHANGED: Step 93 now saves the new look (SALON_SAVE_NEW_93 was replaced with the recorded body)
+    [93, 'Save makeup (new look)', async () => {
       await goto(page, `${V3}/beauty_salon.php`);
       await sleep(page, 5);
       await fire(page, 'Step 93 salon save', '/ajax/beauty_salon_lady.php', SALON_SAVE_NEW_93);
