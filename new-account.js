@@ -1,18 +1,18 @@
 // new-account.js
 // CHANGED: LADY_NAME constant removed. The lady name comes only from the secret.
 const START_AT = Number(process.env.START_AT || 45);       // 1 to 39, then 45 to 100
-const STOP_AT = Number(process.env.STOP_AT || 100);        // CHANGED: default raised from 94 to 100 so the new steps 95-100 run
+const STOP_AT = Number(process.env.STOP_AT || 100);        // default 100; steps 101-104 run only if STOP_AT is raised
 
 const V3 = 'https://v3.g.ladypopular.com';
 const BLOCKS = { eventId: 484, zoneId: 1852 };
 const BOARD = { eventId: 395, zoneId: 320 };
 const BOARD_ITEMS_NEEDED = 3;      // Step 49 / 96 / 98: items that finish the board
-const POSE_COLLECTION_ID = 363;    // Step 101
+const POSE_COLLECTION_ID = 363;    // Step 102
 const BOOSTER_IDS = [191, 192, 193, 194];   // Step 73: popularity boosters
 const BOOSTER_BUY_COUNT = 50;               // Step 73: purchases per booster
 const BOOSTER_BUY_DELAY = 0.5;              // Step 73: seconds between purchases
 
-// CHANGED: board event used by steps 95, 96 and 98
+// board event used by steps 95, 96 and 98
 const BOARD2_EVENT_ID = 386;
 const BOARD2_ZONE_A = { zoneId: 312, rewards: 6 };    // Step 96  (312:6)
 const BOARD2_ZONE_B = { zoneId: 313, rewards: 10 };   // Step 98  (313:10)
@@ -30,11 +30,14 @@ const APPEARANCE_55 = '&appearance%5B0%5D%5Btype%5D=4&appearance%5B0%5D%5Bnum%5D
 
 const FILTER_54 = 'isArchive=false&wardrobePage=wardrobe&ajaxPostUrl=%2Fajax%2Fwardrobe%2Flady.php&selectedPet=&isFavourite=false&contentType=&contentId=&hasItems=true&currentPageNum=1&availableFilterColors%5B%5D=1&availableFilterColors%5B%5D=6&availableFilterColors%5B%5D=8&availableFilterColors%5B%5D=13&availableFilterColors%5B%5D=15&availableFilterColors%5B%5D=17&availableFilterColors%5B%5D=19&availableFilterColors%5B%5D=56&availableFilterColors%5B%5D=68&availableFilterColors%5B%5D=85&routeToMall=%2Fmall%2Fmall.php%3FmallType%3D1%26categoryId%3D%2525categoryId%2525&event_id%5B%5D=395&archive=false&favourites=false&pose=false&animated=false&filter_out_tagged=false&pet=0&empty_filter=false&wardrobetype=lady&default_category=false&page=1&hasMore=false&updatePartials%5B%5D=3';
 
-// CHANGED: Step 103 makeup save (was Step 97, originally Step 93)
+// Step 104 makeup save (was Step 103, originally Step 93)
 const SALON_SAVE_93 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=31&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=10&appearance%5B2%5D%5Bcolor%5D=1&appearance%5B3%5D%5Btype%5D=5&appearance%5B3%5D%5Bnum%5D=191&appearance%5B3%5D%5Bcolor%5D=14&appearance%5B4%5D%5Btype%5D=8&appearance%5B4%5D%5Bnum%5D=1&appearance%5B4%5D%5Bcolor%5D=5&appearance%5B5%5D%5Btype%5D=9&appearance%5B5%5D%5Bnum%5D=30&appearance%5B5%5D%5Bcolor%5D=15&appearance%5B6%5D%5Btype%5D=10&appearance%5B6%5D%5Bnum%5D=9&appearance%5B6%5D%5Bcolor%5D=33&appearance%5B7%5D%5Btype%5D=11&appearance%5B7%5D%5Bnum%5D=2&appearance%5B7%5D%5Bcolor%5D=9&appearance%5B8%5D%5Btype%5D=12&appearance%5B8%5D%5Bnum%5D=1&appearance%5B8%5D%5Bcolor%5D=12&appearance%5B9%5D%5Btype%5D=4&appearance%5B9%5D%5Bnum%5D=3&appearance%5B9%5D%5Bcolor%5D=1';
 
 // Step 93 makeup save - the new look (recorded from the game)
 const SALON_SAVE_NEW_93 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=19&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=1&appearance%5B2%5D%5Bcolor%5D=1&appearance%5B3%5D%5Btype%5D=8&appearance%5B3%5D%5Bnum%5D=1&appearance%5B3%5D%5Bcolor%5D=5&appearance%5B4%5D%5Btype%5D=9&appearance%5B4%5D%5Bnum%5D=14&appearance%5B4%5D%5Bcolor%5D=15&appearance%5B5%5D%5Btype%5D=10&appearance%5B5%5D%5Bnum%5D=9&appearance%5B5%5D%5Bcolor%5D=33&appearance%5B6%5D%5Btype%5D=11&appearance%5B6%5D%5Bnum%5D=2&appearance%5B6%5D%5Bcolor%5D=9&appearance%5B7%5D%5Btype%5D=12&appearance%5B7%5D%5Bnum%5D=1&appearance%5B7%5D%5Bcolor%5D=12&appearance%5B8%5D%5Btype%5D=4&appearance%5B8%5D%5Bnum%5D=3&appearance%5B8%5D%5Bcolor%5D=1&appearance%5B9%5D%5Btype%5D=5&appearance%5B9%5D%5Bnum%5D=191&appearance%5B9%5D%5Bcolor%5D=4';
+
+// CHANGED: Step 101 makeup save - the new look (recorded from the game)
+const SALON_SAVE_101 = 'type=save&appearance%5B0%5D%5Btype%5D=1&appearance%5B0%5D%5Bnum%5D=23&appearance%5B0%5D%5Bcolor%5D=6&appearance%5B0%5D%5Bsize%5D=1&appearance%5B1%5D%5Btype%5D=2&appearance%5B1%5D%5Bnum%5D=19&appearance%5B1%5D%5Bcolor%5D=12&appearance%5B1%5D%5Bsize%5D=1&appearance%5B2%5D%5Btype%5D=3&appearance%5B2%5D%5Bnum%5D=1&appearance%5B2%5D%5Bcolor%5D=1&appearance%5B3%5D%5Btype%5D=5&appearance%5B3%5D%5Bnum%5D=1066&appearance%5B3%5D%5Bcolor%5D=4&appearance%5B4%5D%5Btype%5D=8&appearance%5B4%5D%5Bnum%5D=1&appearance%5B4%5D%5Bcolor%5D=5&appearance%5B5%5D%5Btype%5D=9&appearance%5B5%5D%5Bnum%5D=14&appearance%5B5%5D%5Bcolor%5D=15&appearance%5B6%5D%5Btype%5D=10&appearance%5B6%5D%5Bnum%5D=9&appearance%5B6%5D%5Bcolor%5D=33&appearance%5B7%5D%5Btype%5D=11&appearance%5B7%5D%5Bnum%5D=2&appearance%5B7%5D%5Bcolor%5D=9&appearance%5B8%5D%5Btype%5D=12&appearance%5B8%5D%5Bnum%5D=1&appearance%5B8%5D%5Bcolor%5D=12&appearance%5B9%5D%5Btype%5D=4&appearance%5B9%5D%5Bnum%5D=3&appearance%5B9%5D%5Bcolor%5D=1';
 
 // Step 76 amounts
 const AMOUNTS = [
@@ -61,9 +64,9 @@ const Q = {
   buyBooster: 'mutation BuyBoosterPack($eventId: Int!, $booster: String!, $packId: Int!) { blocks { BuyBoosterPackMutation(eventId: $eventId, booster: $booster, packId: $packId) { status message lady_boosters { bomb color_bomb hammer } } } }',
   // Step 49: includes the board map so we can count the items won
   openSquare: 'mutation OpenBoardSquare($eventId: Int!, $zoneId: Int!, $positionX: Int!, $positionY: Int!) { board { OpenSquareMutation(eventId: $eventId, zoneId: $zoneId, positionX: $positionX, positionY: $positionY) { status message is_zone_completed zone_info { map { is_opened pending value { id type amount } } } } } }',
-  // CHANGED: Steps 96 / 98: same click, but also returns credits so we can stop when they run low
+  // Steps 96 / 98: same click, but also returns credits so we can stop when they run low
   openSquareStats: 'mutation OpenBoardSquare($eventId: Int!, $zoneId: Int!, $positionX: Int!, $positionY: Int!) { board { OpenSquareMutation(eventId: $eventId, zoneId: $zoneId, positionX: $positionX, positionY: $positionY) { status message is_zone_completed lady_stats { credits emeralds } zone_info { map { is_opened pending value { id type amount } } } } } }',
-  // CHANGED: Steps 96 / 98: start a new board in the zone
+  // Steps 96 / 98: start a new board in the zone
   resetBoard: 'mutation Board($eventId: Int!, $zoneId: Int!) { board { ResetBoardMutation(eventId: $eventId, zoneId: $zoneId) { status message lady_stats { credits emeralds } reset_board_info { is_reset_allowed price_start_game { credits } } } } }'
 };
 
@@ -274,7 +277,7 @@ function countBoardItems(map) {
   ).length;
 }
 
-// CHANGED: Steps 96 / 98 - converted from the console script.
+// Steps 96 / 98 - converted from the console script.
 // Plays one board in a zone. Returns { zoneDone } when 3 items are won, throws on any failure.
 const BOARD_SQUARES = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]];
 const boardState = { lastOrder: '', lastCredits: null };
@@ -447,9 +450,9 @@ async function redistributeFP(page) {
 }
 
 // ---------------------------------------------------------------- the script
-module.exports = async function runNewAccount(page, account = {}) {   // CHANGED: receives the account from the secret
-  authState.token = null;   // CHANGED: forget the previous account's GraphQL token
-  // CHANGED: lady name comes ONLY from the secret ("47-Elsa" -> "Elsa"). No fallback.
+module.exports = async function runNewAccount(page, account = {}) {   // receives the account from the secret
+  authState.token = null;   // forget the previous account's GraphQL token
+  // lady name comes ONLY from the secret ("47-Elsa" -> "Elsa"). No fallback.
   const ladyName = (account.name || '').replace(/^\d+-/, '').trim();
   console.log(`💄 Lady name for this account: ${ladyName || '(none)'}`);
   attachTokenListener(page);
@@ -610,11 +613,11 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
     // are intentionally skipped - done manually.
 
     [37, 'Change lady name', async () => {
-      // CHANGED: stop right here if the secret gave no name. No fallback.
+      // stop right here if the secret gave no name. No fallback.
       if (!ladyName) throw new Error('Step 37: no name in the secret for this account. Stopping.');
       await goto(page, `${V3}/settings.php?tab=change_ladyname`);
       await sleep(page, 5);
-      const body = new URLSearchParams({ type: 'changeLadyName', newName: ladyName }).toString();   // CHANGED: ladyName from the secret
+      const body = new URLSearchParams({ type: 'changeLadyName', newName: ladyName }).toString();   // ladyName from the secret
       const j = await postForm(page, '/ajax/settings.php', body);
       need(j, 'Step 37 changeLadyName');
       await sleep(page, 10);
@@ -853,7 +856,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
 
     [76, 'Redistribute FP', async () => { await redistributeFP(page); }],
 
-    // Steps 77-80 and 82 were removed. (Step 81 was moved to Step 102.)
+    // Steps 77-80 and 82 were removed. (Step 81 was moved to Step 103.)
     // Step 83 was removed (its job is now done by Step 73).
 
     [84, 'FA: use all energy', async () => {
@@ -945,13 +948,13 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
 
     [94, 'Repeat step 76 once', async () => { await redistributeFP(page); }],
 
-    // CHANGED: new Step 95 - activate the board event (386)
+    // Step 95 - activate the board event (386)
     [95, 'Activate board event', async () => {
       await fire(page, 'Step 95 activateEvent', '/ajax/events.php', `type=activateEvent&event_id=${BOARD2_EVENT_ID}`);
       await sleep(page, 5);
     }],
 
-    // CHANGED: new Step 96 - play board 1 (zone 312, 6 rewards)
+    // Step 96 - play board 1 (zone 312, 6 rewards)
     [96, 'Play board 1 (zone 312 x6)', async () => {
       await goto(page, `${V3}/events/board.php?event_id=${BOARD2_EVENT_ID}`);
       await sleep(page, 10);
@@ -959,7 +962,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       await sleep(page, 5);
     }],
 
-    // CHANGED: new Step 97 - repeat 74+75 twice
+    // Step 97 - repeat 74+75 twice
     [97, 'Repeat steps 74 and 75 (2 times)', async () => {
       for (let i = 1; i <= 2; i++) {
         console.log(`🔁 Steps 74+75, run ${i}/2`);
@@ -968,7 +971,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       }
     }],
 
-    // CHANGED: new Step 98 - play board 2 (zone 313, 10 rewards)
+    // Step 98 - play board 2 (zone 313, 10 rewards)
     [98, 'Play board 2 (zone 313 x10)', async () => {
       await goto(page, `${V3}/events/board.php?event_id=${BOARD2_EVENT_ID}`);
       await sleep(page, 10);
@@ -976,7 +979,7 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       await sleep(page, 5);
     }],
 
-    // CHANGED: new Step 99 - repeat 74+75 twice
+    // Step 99 - repeat 74+75 twice
     [99, 'Repeat steps 74 and 75 (2 times)', async () => {
       for (let i = 1; i <= 2; i++) {
         console.log(`🔁 Steps 74+75, run ${i}/2`);
@@ -985,51 +988,59 @@ module.exports = async function runNewAccount(page, account = {}) {   // CHANGED
       }
     }],
 
-    // CHANGED: new Step 100 - repeat step 76
+    // Step 100 - repeat step 76
     [100, 'Repeat step 76', async () => { await redistributeFP(page); }],
 
-    // CHANGED: Step 101 (was Step 95)
-    [101, 'Buy pose (collection 363)', async () => {
+    // CHANGED: new Step 101 - save the new makeup look (SALON_SAVE_101)
+    [101, 'Save makeup (new look)', async () => {
+      await goto(page, `${V3}/beauty_salon.php`);
+      await sleep(page, 5);
+      await fire(page, 'Step 101 salon save', '/ajax/beauty_salon_lady.php', SALON_SAVE_101);
+      await sleep(page, 5);
+    }],
+
+    // CHANGED: Step 102 (was Step 101): buy pose
+    [102, 'Buy pose (collection 363)', async () => {
       // the unlock request was recorded from the Fashion Arena page
       await goto(page, `${V3}/duels.php`);
       await sleep(page, 5);
-      await fire(page, 'Step 101 unlock collection', '/ajax/mall/boutique.php', `action=unlockCollection&collectionId=${POSE_COLLECTION_ID}`);
+      await fire(page, 'Step 102 unlock collection', '/ajax/mall/boutique.php', `action=unlockCollection&collectionId=${POSE_COLLECTION_ID}`);
       await sleep(page, 3);
 
       await goto(page, `${V3}/mall/boutique.php?collectionsPage=locked&collectionId=${POSE_COLLECTION_ID}`);
       await sleep(page, 5);
 
-      await fire(page, 'Step 101 add to cart', '/ajax/mall/cart.php',
+      await fire(page, 'Step 102 add to cart', '/ajax/mall/cart.php',
         `action=addToCart&mallType=1&itemId=24931&itemCategoryId=17&itemCollectionId=${POSE_COLLECTION_ID}&itemColor=1&pageNum=1&collectionsPage=limited&orderBy=&orderType=`);
       await sleep(page, 3);
 
-      await fire(page, 'Step 101 go to cart', '/ajax/mall/cart.php', 'action=loadMallContent');
+      await fire(page, 'Step 102 go to cart', '/ajax/mall/cart.php', 'action=loadMallContent');
       await sleep(page, 3);
 
-      await fire(page, 'Step 101 buy item', '/ajax/mall/cart.php', 'action=checkoutCart&collectionsPage=limited');
+      await fire(page, 'Step 102 buy item', '/ajax/mall/cart.php', 'action=checkoutCart&collectionsPage=limited');
       await sleep(page, 5);
     }],
 
-    // CHANGED: Step 102 (was Step 96): buy the items that Step 103 uses in the makeup save (no hair, no save here)
-    [102, 'Salon: buy nose, eyebrows, lips', async () => {
+    // CHANGED: Step 103 (was Step 102): buy the items that Step 104 uses in the makeup save (no hair, no save here)
+    [103, 'Salon: buy nose, eyebrows, lips', async () => {
       await goto(page, `${V3}/beauty_salon.php`);
       await sleep(page, 5);
       const SALON = '/ajax/beauty_salon_lady.php';
-      await fire(page, 'Step 102 nose 10',     SALON, 'type=unlockItem&itemType=3&itemNum=10&pageType=surgeries');
+      await fire(page, 'Step 103 nose 10',     SALON, 'type=unlockItem&itemType=3&itemNum=10&pageType=surgeries');
       await sleep(page, 2);
-      await fire(page, 'Step 102 eyebrows 30', SALON, 'type=unlockItem&itemType=9&itemNum=30&pageType=makeup');
+      await fire(page, 'Step 103 eyebrows 30', SALON, 'type=unlockItem&itemType=9&itemNum=30&pageType=makeup');
       await sleep(page, 2);
-      await fire(page, 'Step 102 lips 31',     SALON, 'type=unlockItem&itemType=2&itemNum=31&pageType=surgeries');
+      await fire(page, 'Step 103 lips 31',     SALON, 'type=unlockItem&itemType=2&itemNum=31&pageType=surgeries');
       await sleep(page, 2);
       await reload(page);
       await sleep(page, 5);
     }],
 
-    // CHANGED: Step 103 (was Step 97): makeup save
-    [103, 'Save makeup', async () => {
+    // CHANGED: Step 104 (was Step 103): makeup save
+    [104, 'Save makeup', async () => {
       await goto(page, `${V3}/beauty_salon.php`);
       await sleep(page, 5);
-      await fire(page, 'Step 103 salon save', '/ajax/beauty_salon_lady.php', SALON_SAVE_93);
+      await fire(page, 'Step 104 salon save', '/ajax/beauty_salon_lady.php', SALON_SAVE_93);
       await sleep(page, 5);
     }]
   ];
